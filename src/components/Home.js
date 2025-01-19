@@ -1,11 +1,12 @@
-
+// Home.js with alphabetical sorting and dark mode toggle
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Home.css';
+import '../index.css';
 
 const Home = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -26,12 +27,16 @@ const Home = () => {
     setSearchTerm(event.target.value);
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode((prevMode) => !prevMode);
+  };
+
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div>
+    <div className={darkMode ? 'dark' : 'light'}>
       <header>
         <h1>User Directory</h1>
         <input
@@ -40,6 +45,9 @@ const Home = () => {
           value={searchTerm}
           onChange={handleSearch}
         />
+        <button onClick={toggleDarkMode}>
+          {darkMode ? 'Light Mode' : 'Dark Mode'}
+        </button>
       </header>
 
       <ul>
