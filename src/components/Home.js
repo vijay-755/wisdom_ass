@@ -1,65 +1,58 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Link } from "react-router-dom";
-import { ThemeContext } from "../context/ThemeContext";
-import "../index.css"
+
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import './Home.css';
 
 const Home = () => {
   const [users, setUsers] = useState([]);
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { darkMode, toggleTheme } = useContext(ThemeContext);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("https://jsonplaceholder.typicode.com/users");
-        if (!response.ok) throw new Error("Failed to fetch users.");
+        const response = await fetch('https://jsonplaceholder.typicode.com/users');
         const data = await response.json();
-        setUsers(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        const sortedData = data.sort((a, b) => a.name.localeCompare(b.name)); // Alphabetical order
+        setUsers(sortedData);
+      } catch (error) {
+        console.error('Error fetching users:', error);
       }
     };
+
     fetchUsers();
   }, []);
 
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(search.toLowerCase())
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className={`home ${darkMode ? "dark" : "light"}`}>
+    <div>
       <header>
         <h1>User Directory</h1>
-        <button onClick={toggleTheme}>{darkMode ? "Light Mode" : "Dark Mode"}</button>
         <input
           type="text"
-          placeholder="Search by name..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
+          placeholder="Search users by name..."
+          value={searchTerm}
+          onChange={handleSearch}
         />
       </header>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p>Error: {error}</p>
-      ) : (
-        <ul>
-          {filteredUsers.map(user => (
-            <li key={user.id}>
-              <Link to={`/user/${user.id}`}>
-                <h3>{user.name}</h3>
-                <p>Email: {user.email}</p>
-                <p>City: {user.address.city}</p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul>
+        {filteredUsers.map((user) => (
+          <li key={user.id}>
+            <Link to={`/users/${user.id}`}>
+              <h2>{user.name}</h2>
+              <p>Email: {user.email}</p>
+              <p>City: {user.address.city}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
