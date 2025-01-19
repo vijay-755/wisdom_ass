@@ -11,7 +11,7 @@ const App = () => (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/user/:id" element={<UserDetail />} />
+        <Route path="/users/:id" element={<UserDetail />} />
       </Routes>
     </BrowserRouter>
   </ThemeContextProvider>
